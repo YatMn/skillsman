@@ -157,7 +157,7 @@ test('snapshot aliases merge without silent overwrite and conflicting aliases fa
   assert.throws(() => config.parseSnapshot(text(input)), /conflict/i);
 });
 
-test('all checked-in scenario documents remain readable with their original metadata', () => {
+test('checked-in scenarios have valid metadata and explicit candidate names', () => {
   const root = path.resolve(__dirname, '../scenarios');
   for (const file of fs.readdirSync(root).filter(name => name.endsWith('.yaml'))) {
     const scenario = config.readScenario(path.join(root, file));
@@ -165,6 +165,7 @@ test('all checked-in scenario documents remain readable with their original meta
     assert.equal(typeof scenario.title, 'string');
     assert.equal(typeof scenario.summary, 'string');
     assert(Array.isArray(scenario.skills));
+    for (const entry of scenario.skills) assert(entry.names?.length > 0);
   }
   assert(config.expandScenario('all', root).length > 0);
 });

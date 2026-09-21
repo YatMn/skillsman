@@ -1,12 +1,21 @@
 name: web-app
 title: Web App
-summary: Build and test frontend, React, Next.js, and application UI work.
+summary: Frontend visual design, local browser testing, and interactive artifact candidates.
 
 includes: []
 
 skills:
   - source: anthropics/skills
-    why: Frontend design and browser-based web app testing.
+    why: "Frontend visual direction and UI composition; this is not a complete React or Next.js engineering guide."
     names:
       - frontend-design
+
+  - source: anthropics/skills
+    why: "Conditional candidate for scripted local-app tests using Python Playwright and Chromium. Its networkidle readiness guidance conflicts with current Playwright recommendations; use relevant page assertions and proportionate checks."
+    names:
       - webapp-testing
+
+  - source: anthropics/skills
+    why: "Complex HTML prototypes intended for Claude artifacts, with a specific frontend build toolchain; inspect host and output compatibility before selecting."
+    names:
+      - web-artifacts-builder

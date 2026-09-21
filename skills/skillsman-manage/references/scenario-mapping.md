@@ -1,32 +1,38 @@
-# Skillsman Scenario Candidates
+# Scenario Mapping
 
-Use project type to find candidate sources, then choose individual skills for the
-actual responsibilities in the request. A row is a place to look, not a bundle
-to install. Read current scenario definitions and source skill instructions before
-confirming names or recommending installation.
+Use these as candidate categories. Each built-in entry lists explicit names and
+its selection conditions in `why`; a category match does not request the entire
+scenario. Inspect current source instructions and existing tools before choosing.
 
-| Project type | Candidate scenarios | Choose by actual responsibility |
+| Task | Candidate scenarios | Selection boundary |
 | --- | --- | --- |
-| Development management | `workflow` | Select repository guidance, branching, README, planning or review skills only for the work requested. For example, `skillsman-readme` handles README work; it does not require the rest of `workflow`. |
-| Backend development | `workflow`; `database` or `deployment` if relevant | Identify the API/service task first. Inspect database candidates for concrete schema/query/storage work, and deployment candidates for an actual hosting or runtime responsibility. |
-| Frontend or web app | `web-app` | Inspect `frontend-design` for UI design and `webapp-testing` for browser testing; choose either or both according to the task. Add workflow or hosting candidates only when those responsibilities are present. |
-| Full-stack development | Relevant parts of `web-app`, `database`, `deployment`, `workflow` | Break the request into UI, data, hosting and delivery tasks. Pick individual skills for the tasks that exist; “full-stack” alone does not justify four scenarios. |
-| Database work | `database` | Inspect the source's real catalog for the requested Supabase/Postgres, query, schema, migration or storage responsibility. The scenario's omitted names require discovery before making a named selection. |
-| Deployment or operations | `deployment` | Confirm the hosting platform first. The current candidates are Vercel-specific; inspect names such as `env-vars`, `vercel-functions` or `verification` for the requested job. Do not treat them as generic Cloudflare or all-platform coverage. |
-| Research | `research` | Match source gathering, web extraction or evidence review to the available skill's instructions and tools. Do not infer that one research skill covers every source. |
-| Writing or documentation | `writing`; `workflow` for repository docs | Choose by deliverable: document collaboration, DOCX, PDF, slides, spreadsheets, editing or Notion work. For repository README or agent instructions, inspect `skillsman-readme` or `skillsman-agents-md`. |
-| Design | `design`; `web-app` for frontend UI | Distinguish brand/static assets, generated images, prototypes and web UI. Choose the relevant skill after checking the required output and available tools. |
+| Project planning, debugging or delivery | `workflow` | Select a concrete method or repository helper. Inspect companion-skill requirements; Superpowers routing, OpenSpec and Claude/tmux agent coordination are opt-in, not prerequisites for every task. |
+| Frontend or web app | `web-app` | `frontend-design` supplies visual guidance. `webapp-testing` needs Python Playwright/Chromium and proportionate readiness checks; upstream networkidle guidance conflicts with current Playwright recommendations. `web-artifacts-builder` targets Claude HTML artifacts. These are not full React/Next.js engineering coverage. |
+| Backend or full-stack development | Relevant parts of `workflow`, `web-app`, `database`, `deployment` | Decompose the request into actual UI, data, hosting and delivery responsibilities. A stack label does not justify installing four scenarios. |
+| Database work | `database` | `supabase-postgres-best-practices` for Postgres; `supabase` for its Auth, Storage, Realtime or other platform services. Choose both only when both responsibilities exist. |
+| Deployment or operations | `deployment` | Vercel only. Start with `vercel-cli`, `deployments-cicd` or `env-vars`; select Functions, cache, routing, Marketplace, Agent, Sandbox or Workflow SDK only for those services. `workflow` here is a Vercel SDK. Check provisioning and companion-skill assumptions. |
+| Research | `research` | `doko` fetches rendered browser sources and needs its CLI/extension plus a bridge or remote API key. `huashu-research` provides a research process with workspace/shared-rule assumptions. `notion-research-documentation` requires Notion access. |
+| Prose, scripts and editing | `writing` | `doc-coauthoring` is a content collaboration method, not a file generator. Retain `huashu-proofreading` as a preferred practical writing choice; select other editing, speech or social-platform methods by actual task. Check video APIs and local resources. |
+| Office files and file-based reports | `documents` | Select DOCX/PDF/PPTX/XLSX by the output format and available runtime tools. `huashu-md-to-pdf` has reported Chinese rendering issues in some macOS Preview environments; `huashu-data-pro` references external styles. Research outside file/report work stays in research. |
+| Knowledge capture or meeting preparation | `writing`; `research` for synthesis; `workflow` for implementation | Notion capture/meetings, research and spec-to-implementation belong to their actual tasks. Require connector/workspace access; do not duplicate an installed plugin's equivalent skills. |
+| Repository documentation | `workflow` | Choose `skillsman-readme` or `skillsman-agents-md`; neither needs the full workflow scenario. |
+| Visual assets | `design`; `web-app` for UI | Separate static composition and generative art from UI or artifacts. `huashu-design` suits deliberate multi-variant exploration. Themes, Slack GIFs, WeChat/Xiaohongshu images and image uploads require those specific tasks and tools. |
 
 ## Selection Rules
 
-- Read project instructions, existing skills and the user's tasks. A stack label
-  helps locate candidates but does not authorize installation.
-- For each proposed skill, state its complete name, source, task-specific reason,
-  observed installation state and overlap with existing capabilities.
-- Inspect real source names; omitted `names` is a full-source request only when
-  explicitly installing that scenario. A reusable choice always records explicit
-  names and `includes: []`. Discovery failure must not trigger full-source fallback.
-- Save the smallest sufficient named choice, preview it with `plan --file`, and
-  use `init --file` or `add --file` within the user's existing authorization.
-- Keep explicit whole-scenario requests valid, but do not promote a candidate
-  mapping into such a request. `all` remains an audit-only scenario.
+- Read the user's goals, repository instructions and installed skills first.
+  Existing authorization persists; a matching category does not authorize more work.
+- For each proposed skill, state its name, source, task-specific benefit,
+  prerequisites, observed installation state and overlap with existing capabilities.
+- Prefer the smallest sufficient named choice. Keep the built-in catalog explicit;
+  outside scenarios may still omit `names` to request an entire source, but saved
+  project choices always use explicit names and `includes: []`.
+- Preview with `plan --file` and use `init --file` or `add --file` within scope.
+  Discovery failure must not trigger a full-source fallback.
+- Explicit whole-scenario requests remain valid; they select every listed name,
+  including conditional candidates. `all` is an audit-only aggregate.
+- Catalog moves or exclusions do not remove or rewrite installed project choices.
+  Review a saved choice deliberately before changing it.
+- Add a source only for a demonstrated task gap. For uncertain usefulness, compare
+  a small number of real tasks; use observed quality and rework, not catalog size
+  or model age, to decide whether a skill earns its place.

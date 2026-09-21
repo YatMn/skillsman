@@ -1,11 +1,21 @@
 name: research
 title: Research
-summary: Research, gather sources, extract knowledge, and verify references.
+summary: Gather web sources and synthesize research, with explicit tool and workspace requirements.
 
 includes: []
 
 skills:
   - source: dokobot/skills
-    why: Read and extract rendered web pages with Chrome.
+    why: "Read rendered pages through Chrome; doko is the skill name, dokobot the CLI. Requires the CLI and Chrome extension, plus a local bridge or remote API key. Choose when existing browser tools leave a real gap."
     names:
-      - dokobot
+      - doko
+
+  - source: alchaincyf/huashu-skills
+    why: "Structured research and source-backed briefs; inspect its knowledge-base paths and shared-rule references before selecting."
+    names:
+      - huashu-research
+
+  - source: openai/skills
+    why: "Synthesize and document research across Notion pages; requires the Notion connector and workspace access, and is not general web search."
+    names:
+      - notion-research-documentation

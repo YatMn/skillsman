@@ -1,18 +1,46 @@
 name: workflow
 title: Workflow
-summary: Plan, implement, review, publish, and maintain project work.
+summary: Plan, debug, review, and maintain a project using its chosen delivery process.
 
 includes: []
 
 skills:
   - source: obra/superpowers
-    why: Planning, TDD, debugging, review, verification, and branch workflow.
+    why: "Choose individual planning, debugging or review methods for substantial tasks. Check companion-skill requirements and available tools; these methods are not mandatory for every change."
+    names:
+      - brainstorming
+      - writing-plans
+      - executing-plans
+      - systematic-debugging
+      - test-driven-development
+      - requesting-code-review
+      - receiving-code-review
+      - verification-before-completion
+
+  - source: obra/superpowers
+    why: "Only when the project explicitly adopts the Superpowers framework; this entry adds conversation-wide skill-routing instructions."
+    names:
+      - using-superpowers
 
   - source: YatMn/skillsman
-    why: Personal repo guidance, branch workflow, OpenSpec, next prompt, and README helpers.
+    why: "Repository instructions, branching, handoff and README work; select only the helper needed and follow the actual repository policy."
     names:
       - skillsman-agents-md
       - skillsman-branch
       - skillsman-next-prompt
-      - skillsman-openspec
       - skillsman-readme
+
+  - source: YatMn/skillsman
+    why: "Only for projects choosing OpenSpec specification tracking; do not introduce a second planning workflow automatically."
+    names:
+      - skillsman-openspec
+
+  - source: openai/skills
+    why: "Turn existing Notion specifications into implementation tasks; requires the Notion connector and workspace access."
+    names:
+      - notion-spec-to-implementation
+
+  - source: alchaincyf/huashu-skills
+    why: "Experimental parallel-agent workflow for projects already using Claude CLI and tmux; inspect its Git coordination and environment assumptions first."
+    names:
+      - huashu-agent-swarm

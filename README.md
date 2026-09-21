@@ -204,7 +204,7 @@ Selections, digests and snapshots do not restore exact historical content.
 | Skill | Purpose |
 | --- | --- |
 | `skillsman-agents-md` | Create or improve repository agent instruction files such as `AGENTS.md`. |
-| `skillsman-branch` | Create, inspect, sync, and govern Git/GitHub branches using a main/develop/release model. |
+| `skillsman-branch` | Follow the repository’s actual Git/GitHub branch policy, including default-branch or main/develop/release workflows. |
 | `skillsman-manage` | Manage project skills: inspect, initialize, add, remove, update, snapshot, apply, and diagnose. |
 | `skillsman-next-prompt` | Create concise continuation, handoff, or fresh-session prompts for Codex. |
 | `skillsman-openspec` | Install, initialize, update, and operate OpenSpec spec-driven workflows. |
@@ -218,14 +218,28 @@ sync.
 
 | Scenario | Use case |
 | --- | --- |
-| `workflow` | Planning, branching, review, publish, OpenSpec, README, and repository workflow skills. |
-| `web-app` | Frontend, React, Next.js, UI, and browser app testing. |
-| `deployment` | Hosted web app deployment, env vars, functions, runtime, and verification. |
-| `database` | Supabase, Postgres, and storage. |
-| `research` | Web research and knowledge extraction. |
-| `writing` | Writing, docs, editing, office files, scripts, meetings, data, and slides. |
-| `design` | Visual design, brand assets, themes, artifacts, and generated images. |
+| `workflow` | Selected planning, debugging, review and repository helpers; framework-specific workflows are opt-in. |
+| `web-app` | Frontend visual design, conditional local browser testing and interactive artifacts; not complete React/Next.js engineering coverage. |
+| `deployment` | Vercel-specific deployment, environment and runtime candidates. |
+| `database` | Postgres guidance, with Supabase product integration selected separately. |
+| `research` | Browser source gathering, research briefs and Notion research, with tool/workspace prerequisites. |
+| `writing` | Prose, proofreading, scripts, social content, knowledge capture and meeting notes. |
+| `documents` | Word, PDF, presentations, spreadsheets and file-based reports. |
+| `design` | Static visuals, generative art, themes and task-specific images. |
 | `all` | Audit/test aggregate only. Do not use for real projects. |
+
+All bundled scenarios now enumerate skill names; future upstream additions do
+not silently expand those lists. A candidate is not a default installation:
+read its `why`, required tools and current upstream instructions before choosing.
+For Vercel, start with CLI/deployment/environment candidates; specialist services
+need a matching task. Superpowers and OpenSpec are explicit project choices.
+Reuse compatible skills already supplied by an installed plugin.
+
+`writing` handles content; `documents` handles file structure and delivery.
+Notion candidates stay in the category of their task and require connector access.
+`huashu-proofreading` remains a preferred writing candidate based on practical use.
+See the [selection guide](skills/skillsman-manage/references/scenario-mapping.md)
+and [catalog review](docs/verification/catalog-review.md) for conditions and exclusions.
 
 Inspect scenario candidates and their reasons:
 
