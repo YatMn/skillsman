@@ -2,3 +2,6 @@
 /tests/
 /.agents
 /skills-lock.json
+/node_modules/
+/.skillsman/state.json
+/.skillsman/operation.lock/

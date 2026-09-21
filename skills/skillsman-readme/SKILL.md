@@ -1,6 +1,6 @@
 ---
 name: skillsman-readme
-description: Create or update project README documentation for software repositories. Use when asked to write, rewrite, audit, refresh, sync, or update README.md, README.zh-CN.md, project onboarding docs, quick-start docs, or bilingual English-first README files; especially when Codex must inspect a repository, infer real setup/dev/test/deploy commands, update docs after code changes, and produce or maintain an English primary README with a linked Chinese companion.
+description: "Create or update a project README using verified repository commands and the user’s requested language."
 ---
 
 # Skillsman README

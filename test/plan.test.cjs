@@ -1,0 +1,11 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const {buildPlan}=require('../lib/skillsman/plan.cjs');
+function input(mode='init'){return {mode,selection:{includes:[],skills:[{source:'example/kit',why:'Docs',names:['alpha']}]},targets:['codex'],selectionDigest:'choice',inventory:{items:[],problems:[]},state:{version:1,entries:[]}};}
+function present(i,overrides={}){const row={source:'example/kit',name:'alpha',target:'codex',digest:'original',realPath:'/tmp/project/.agents/skills/alpha',sharedTargets:['codex'],problems:[],...overrides};i.inventory.items.push(row);return row;}
+function baseline(i){i.state.entries.push({source:'example/kit',name:'alpha',target:'codex',digest:'original'});}
+function codes(i){return buildPlan(i).items.flatMap(r=>r.problems.map(p=>p.code));}
+test('missing, unverified existing, and modified existing have different actions',()=>{const i=input();assert.equal(buildPlan(i).items[0].action,'install');const row=present(i);assert.equal(buildPlan(i).items[0].observed,'content-unverified');baseline(i);row.digest='edited';assert.equal(buildPlan(i).items[0].observed,'local-modified');i.mode='update';assert(codes(i).includes('LOCAL_MODIFIED'));});
+test('source conflicts and unknown baselines are blocked',()=>{for(const [source,code] of [[null,'SOURCE_UNKNOWN'],['elsewhere/kit','SOURCE_CONFLICT']]){const i=input();present(i,{source});assert(codes(i).includes(code));}const i=input('update');present(i);assert(codes(i).includes('BASELINE_UNKNOWN'));});
+test('shared targets require explicit scope and extra names are preserved',()=>{const i=input('update');present(i,{sharedTargets:['codex','cursor']});baseline(i);assert(codes(i).includes('SHARED_IMPACT'));i.targets=['all'];assert.equal(codes(i).length,0);present(i,{name:'delta'});assert.deepEqual(buildPlan(i).extras.map(r=>r.name),['delta']);});
+test('same installed path identity with a different full name blocks',()=>{const i=input();i.selection.skills[0].names=['Alpha'];present(i);assert(codes(i).includes('NAME_CONFLICT'));});
+test('nonrequested occurrences still protect shared canonical installation',()=>{const i=input();i.inventory.allItems=[{source:'other/kit',name:'alpha',target:'claude-code',problems:[]}];assert(codes(i).includes('SOURCE_CONFLICT'));});

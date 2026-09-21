@@ -4,7 +4,8 @@
   "description": "Personal agent skills manager for bundled skills and project scenarios.",
   "license": "MIT",
   "scripts": {
-    "test": "bash test/skillsman-cli.test.sh"
+    "test": "node --test test/*.test.cjs",
+    "test:smoke": "bash test/smoke-real-upstream.sh"
   },
   "publishConfig": {
     "access": "public"
@@ -14,11 +15,20 @@
   },
   "files": [
     "bin/",
+    "lib/",
     "scenarios/",
     "skills/",
     "test/",
     "README.md",
     "README.zh-CN.md",
-    "LICENSE"
-  ]
+    "LICENSE",
+    "examples/",
+    "docs/verification/"
+  ],
+  "dependencies": {
+    "yaml": "2.8.3"
+  },
+  "engines": {
+    "node": ">=22.20.0"
+  }
 }

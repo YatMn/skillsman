@@ -4,89 +4,200 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Skillsman manages reusable agent skills and project setup scenarios for Codex,
-Claude Code, Cursor, and other environments that install skills through
-`npx skills`.
+Skillsman helps you choose specific agent skills, initialize a project without
+replacing existing work, and reuse that choice in another project. Scenarios
+provide candidates; a saved selection names the skills you actually want.
 
 The repository contains installable `skillsman-*` skills, scenario definitions,
-and a Bash CLI. The CLI expands a selected scenario, checks the target
-project, and delegates installation to `npx skills`.
+a Bash entrypoint, and Node.js modules. Installation is delegated to the pinned
+upstream package `skills@1.5.26`; YAML parsing uses `yaml@2.8.3`.
 
 Maintainer: YatMn <yatmn@outlook.com>
 
 ## What It Does
 
-- Stores first-party agent skills under `skills/`.
-- Defines install scenarios under `scenarios/`.
-- Installs skills into project-local agent directories.
-- Supports any project agent accepted by `npx skills --agent`.
-- Captures and applies project skill snapshots.
+- Previews explicit selections with sources, reasons, observed state and actions.
+- Installs missing selected skills and preserves unrelated skills and local edits.
+- Saves an independent selection for each project, reusable across projects and agents.
+- Refreshes only saved selections when you explicitly request an update.
+- Captures and applies target-specific snapshots of installed names and sources.
 
-Skillsman does not install global skills. Install commands write into the
-selected project and refuse to install into this repository unless
-`--allow-self-install` is passed explicitly.
+Skillsman does not install global skills. Mutating installation commands refuse
+to target this repository unless `--allow-self-install` is explicit. Codex is the
+primary validation target; accepting another upstream agent ID does not establish
+complete validation or isolation for that agent.
 
 ## Quick Start
 
-Install a scenario in the current project:
+Use Node.js **>=22.20.0**, npm/npx and Bash. In a local checkout, install the
+Node dependencies before invoking the CLI or installing its symlink:
 
 ```bash
-npx github:YatMn/skillsman init workflow --target codex
-npx github:YatMn/skillsman add web-app --target codex
+npm ci
+./bin/skillsman --help
 ```
 
-Install scenarios into another project:
+The [example selection](examples/selection.yaml) chooses just two bundled skills:
+
+```yaml
+includes: []
+skills:
+  - source: YatMn/skillsman
+    why: Keep project instructions and README accurate.
+    names:
+      - skillsman-agents-md
+      - skillsman-readme
+```
+
+Choose an existing destination project, then preview and initialize it:
 
 ```bash
-npx github:YatMn/skillsman init workflow --target codex --project /path/to/project
-npx github:YatMn/skillsman add database --target codex --project /path/to/project
+./bin/skillsman plan --file examples/selection.yaml --target codex --project /path/to/project
+./bin/skillsman init --file examples/selection.yaml --target codex --project /path/to/project
 ```
 
-Use a local checkout:
+These commands resolve the selected source's current content. They do not install
+its other skills. `plan` reads inventory without changing destination project
+files. `init` saves an independent `.skillsman/skills.yaml` and verifies installed
+content; repeating the same initialization keeps matching existing skills.
+
+Reuse the saved choice in another existing project, optionally for another agent:
 
 ```bash
-./bin/skillsman list
-./bin/skillsman show workflow
-./bin/skillsman init workflow --target codex --project /path/to/project
+./bin/skillsman plan --file /path/to/project/.skillsman/skills.yaml --target cursor --project /path/to/another-project
+./bin/skillsman init --file /path/to/project/.skillsman/skills.yaml --target cursor --project /path/to/another-project
 ```
 
-Install one bundled skill directly:
+The input file is only read. Editing the second project's selection does not
+change the first project's choice or copy its machine state.
+
+To expose the checkout's CLI on PATH after `npm ci`:
 
 ```bash
-npx skills add YatMn/skillsman --skill skillsman-readme --agent codex
+./install.sh
 ```
+
+This creates `~/.local/bin/skillsman`; ensure that directory is on PATH. It is a
+link to this checkout, not an installation of its Node dependencies or skills.
+The remaining examples use that `skillsman` command.
+
+The GitHub-hosted entrypoint is also available as a launch mechanism:
+
+```bash
+npx github:YatMn/skillsman --help
+```
+
+Check that the fetched revision exposes `plan --file` and `init --file` before
+using it for this workflow; a remote revision may differ from your local checkout.
 
 ## Recommended Setup
 
-For a new project, install only the management skill first:
+You can bootstrap the management skill separately:
 
 ```bash
-npx skills add YatMn/skillsman --skill skillsman-manage --agent codex
+npx --yes skills@1.5.26 add YatMn/skillsman --skill skillsman-manage --agent codex
 ```
 
-Then give Codex the target agent and project type:
+Installing this skill does not put the Skillsman CLI on PATH. It guides selection
+and uses a compatible CLI; verify the entrypoint as described above.
 
 ```text
-Use $skillsman-manage to initialize project skills for this repository.
-
+Use $skillsman-manage to help initialize skills for this repository.
 Target: codex
-Project type: web app
 Project path: current repository
-
-Inspect the project briefly, recommend the matching Skillsman scenarios, show the
-install plan, and wait for confirmation before installing.
+Read the project instructions, existing skills and actual tasks. Recommend a
+minimal list of named skills with sources and reasons, and preview it before
+installation. Reuse any selection and authorization already given in this task.
 ```
 
-Use `Target: claude-code`, `Target: cursor`, `Target: gemini-cli`,
-`Target: all`, or a comma list such as `Target: codex,cursor` when installing
-for other agents. Change `Project type` to match the project, for example
-`backend service`, `full-stack app`, `research project`, `writing project`, or
-`design project`.
+Use scenarios as candidate lists, inspect real source skill names, and choose
+only the skills needed. Source discovery failure must be reported rather than
+converted into a full-source installation.
 
-`skillsman-manage` uses that context to recommend the right Skillsman scenarios,
-shows the plan, asks for confirmation, and then runs `skillsman init`,
-`skillsman add`, `skillsman remove`, `skillsman update`, `skillsman snapshot`,
-`skillsman apply`, or `skillsman doctor` as needed.
+## Selection and Local State
+
+| File | Meaning |
+| --- | --- |
+| `.skillsman/skills.yaml` | Reusable choice: sources, reasons and explicit names; no target agent or installation baseline. Suitable for Git. |
+| `.skillsman/state.json` | Local verified installation records: source, name, target, content digest and nullable revision. Do not copy as another project's baseline. |
+| `skills-lock.json` | Upstream-managed source evidence; not a selection file or a file Skillsman rewrites. |
+
+Add `.skillsman/state.json` to the target project's `.gitignore`. Skillsman does
+not edit `.gitignore` automatically. Digests include skill files, references,
+scripts, agent metadata and contained links; they do not contain a backup copy.
+
+A selection requires `includes: []`, a `skills` list, nonempty `source` and `why`,
+and explicit nonempty `names` per source. `skills: []` is valid and installs
+nothing; a missing file is an error. Names with spaces remain whole strings.
+Wildcards, YAML anchors/aliases/tags, multiple documents, nonempty flow
+collections, unknown fields, control characters and option-like source/name
+values are rejected. Use block lists and quoted strings where needed.
+
+Identical source/name pairs deduplicate. Merging the same source retains its
+first reason. Different sources or names that collide at the installation
+directory are errors. Local source paths are resolved relative to the destination
+project for comparison and installation; they are not rewritten in the manifest.
+
+```bash
+skillsman plan --file /path/to/selection.yaml --target codex --project /path/to/project
+skillsman add --file /path/to/additions.yaml --target codex --project /path/to/project
+```
+
+`plan` previews the file supplied to it. `add --file` merges into the saved choice
+and checks that merged result before installing. `init --file` refuses a different
+existing selection: edit it intentionally or use `add --file`. A scenario and
+`--file` cannot be combined; `init` and `add` do not accept `--dry-run`.
+
+Preflight conflicts stop installation. If execution later partially fails,
+verified successes and the saved choice remain, the command exits nonzero, and
+initialization can be retried to fill missing items. Removing a skill with
+`remove` leaves the saved choice unchanged; edit that choice separately if it
+should no longer be selected.
+
+## Scoped Updates
+
+`update` requires explicit targets and an existing `.skillsman/skills.yaml`.
+It checks sources, local content baselines and shared-agent impact before
+refreshing selected names. It never falls back to a whole-project update.
+
+```bash
+skillsman update --target codex --project /path/to/project --dry-run
+skillsman update --target codex --project /path/to/project
+```
+
+A preview can fetch selected source content into a temporary project without
+changing the destination. An update re-fetches selected content; it does not
+necessarily mean that a newer version was found. Missing skills, unknown sources,
+unverified baselines, local changes, broken links or unresolved sharing block
+the affected plan. Initialization can preserve existing unverified content, but
+that does not create a trusted update baseline.
+
+Codex skills under `.agents/skills` can be associated with the universal-agent
+IDs `antigravity,codex,cursor,gemini-cli,github-copilot,zed`. Thus an update with
+only `--target codex` can return `SHARED_IMPACT`. Review the reported associations
+and explicitly include every affected target before updating, for example:
+
+```bash
+skillsman update --target antigravity,codex,cursor,gemini-cli,github-copilot,zed --project /path/to/project --dry-run
+skillsman update --target antigravity,codex,cursor,gemini-cli,github-copilot,zed --project /path/to/project
+```
+
+Additional linked agents must also be included when reported. To authorize
+refreshing all known existing associations of the selected skills, use:
+
+```bash
+skillsman update --target all --project /path/to/project --dry-run
+skillsman update --target all --project /path/to/project
+```
+
+For updates, `all` resolves to concrete existing target IDs, grouped by skill and
+source. It does not pass `--agent '*'` or install the selection for new agents.
+Unknown associations still block verification. Shared labels indicate filesystem
+associations, not proof that each agent has run the skill.
+
+There is no automatic tracking, background update or propagation between
+projects. New skills added to a source do not enter an existing selection.
+Selections, digests and snapshots do not restore exact historical content.
 
 ## Bundled Skills
 
@@ -116,110 +227,92 @@ sync.
 | `design` | Visual design, brand assets, themes, artifacts, and generated images. |
 | `all` | Audit/test aggregate only. Do not use for real projects. |
 
-Preview a scenario before installing it:
+Inspect scenario candidates and their reasons:
 
 ```bash
 skillsman show workflow
 skillsman show web-app
 ```
 
-Scenario files are simple YAML:
+An explicitly requested scenario can still be installed:
 
-```yaml
-skills:
-  - source: YatMn/skillsman
-    why: Repository guidance, branch workflow, OpenSpec, next prompt, and README helpers.
-    names:
-      - skillsman-branch
-      - skillsman-openspec
-      - skillsman-readme
+```bash
+skillsman init workflow --target codex --project /path/to/project
+skillsman add writing --target codex,cursor --project /path/to/project
 ```
 
-If `names` is omitted, Skillsman installs all skills from that source with
-`npx skills add <source>`. If `names` is present, only the listed skills are
-installed.
+Scenarios use `includes` and `skills` entries with `source`, `why` and optional
+`names`. Omitting `names` explicitly requests the whole source. Skillsman must
+enumerate its names before saving a reusable choice. A full-source request with
+both existing and missing skills is blocked if it would overwrite existing work;
+use an explicit file selection to fill only the missing items. `scenarios/all.yaml`
+is an audit aggregate, and `init all` / `add all` are rejected.
 
 ## Targets
 
 | Target | Behavior |
 | --- | --- |
-| `codex` | Passes `--agent codex` to `npx skills`. |
-| `claude`, `claude-code` | Passes `--agent claude-code` to `npx skills`. |
-| `cursor` | Passes `--agent cursor` to `npx skills`. |
-| `gemini`, `gemini-cli` | Passes `--agent gemini-cli` to `npx skills`. |
-| `openclaw` | Passes `--agent openclaw` to `npx skills`. |
-| `antigravity` | Passes `--agent antigravity` to `npx skills`. |
-| `all` | Passes `--agent '*'` to `npx skills`. |
+| `codex`, `cursor`, `openclaw`, `antigravity` | Uses the corresponding upstream agent ID. |
+| `claude`, `claude-code` | Normalizes to `claude-code`. |
+| `gemini`, `gemini-cli` | Normalizes to `gemini-cli`. |
+| `github-copilot`, `zed` | Recognized upstream inventory labels; may share universal skill content. |
+| `all` | Meaning depends on the command: inspect all project agents; update existing associations; apply snapshot targets; init/add request all upstream agents. |
 
-Install commands require `--target`. Use a comma-separated list such as
-`--target codex,cursor`, or use `--target all`. Unknown targets are passed
-through to `npx skills --agent` unchanged.
+Use comma-separated IDs for multiple targets. `all` cannot be mixed with explicit
+IDs. `plan`, `init`, `add`, `update`, `remove`, `snapshot` and `apply` require
+`--target`; `status` and `doctor` default to inspecting all targets when omitted.
+Unlike scoped updates, `init` / `add --target all` can create additional agent
+placements through upstream `--agent '*'`.
+Unknown IDs pass to upstream, but an inventory whose target mapping cannot be
+verified is reported as unknown and may block changes; no directory is guessed.
 
-## Commands
+## Other Commands
 
 ```bash
 skillsman list
-skillsman show workflow
-skillsman status --target codex
-skillsman init workflow --target codex
-skillsman add writing --target codex,cursor
-skillsman remove skillsman-readme --target codex
-skillsman snapshot --target codex
-skillsman apply .skillsman/skills.snapshot.yaml --target codex --project /path/to/project
-skillsman update --project /path/to/project
-skillsman restore --project /path/to/project
-skillsman doctor --target codex
+skillsman status --target codex --project /path/to/project
+skillsman remove skillsman-readme --target codex --project /path/to/project
+skillsman doctor --target codex --project /path/to/project
 skillsman coverage
 ```
 
-`init`, `add`, and scenario shorthand commands skip skills that already have a
-`SKILL.md` file in a known target directory or appear in `npx skills list`.
-Missing skills are grouped by source and installed through `npx skills add`.
-
-`status` lists installed project skills through `npx skills list`. `remove`
-deletes explicitly named project skills through `npx skills remove`.
-`update` passes through to `npx skills update -p -y`. `restore` is a legacy
-passthrough to `npx skills experimental_install`; scenario installs are the
-preferred repeatable path.
+`status` compares actual installed skills with saved choices when present.
+`doctor` checks upstream availability and inventory; use it for diagnosis rather
+than after every successful operation. `restore` is an explicit legacy-command
+error, not an alias. Use `init --file` or `apply` with a current snapshot.
 
 ## Snapshots
 
-Save installed project skills:
-
 ```bash
-skillsman snapshot --target codex
-skillsman snapshot --target codex --output /path/to/skills.snapshot.yaml
+skillsman snapshot --target codex --project /path/to/project
+skillsman snapshot --target codex --project /path/to/project --output /path/to/skills.snapshot.yaml
+skillsman apply /path/to/skills.snapshot.yaml --target codex --project /path/to/another-project --dry-run
+skillsman apply /path/to/skills.snapshot.yaml --target codex --project /path/to/another-project
 ```
 
-Default snapshot path:
+The default path is `<project>/.skillsman/skills.snapshot.yaml`. Only
+`skillsman.snapshot.v1` is accepted, with required schema and target-keyed lists
+of `{name, source}`. Readable linked skills are included; unresolved source or
+inventory errors prevent a successful snapshot.
 
-```text
-<project>/.skillsman/skills.snapshot.yaml
-```
+Snapshots preserve the observed GitHub skill subdirectory and encode branch names.
+When a Git/GitLab subdirectory cannot be expressed safely by the upstream source
+syntax, snapshot creation fails instead of silently widening the source.
 
-Apply a snapshot:
-
-```bash
-skillsman apply /old/project/.skillsman/skills.snapshot.yaml --target codex --project /new/project
-skillsman apply /old/project/.skillsman/skills.snapshot.yaml --target codex --project /new/project --dry-run
-```
-
-Snapshots use schema `skillsman.snapshot.v1`. `snapshot` scans installed
-`SKILL.md` files and resolves each skill's source from `skills-lock.json`. If a
-source cannot be resolved, the command fails instead of writing an incomplete
-snapshot.
+`apply` requires matching target sections and preserves the project's selection
+file. With `--target all`, it expands the snapshot's concrete target IDs, checks
+the combined plan before any installation, and then executes grouped writes.
+Conflicting sources or installation identities across target sections reject the
+whole apply operation before installation. It is not a cross-agent selection
+conversion or a content rollback. Use `skills.yaml` to reuse a chosen set with another agent. Missing-schema or legacy
+formats are rejected rather than implicitly converted.
 
 ## Development
 
-Install the local CLI symlink:
+After `npm ci`, run the relevant checks from the repository root:
 
 ```bash
-./install.sh
-```
-
-Run local checks:
-
-```bash
+npm test
 bash -n install.sh bin/skillsman
 ./bin/skillsman list
 ./bin/skillsman show workflow
@@ -228,17 +321,22 @@ git diff --check
 npm pack --dry-run
 ```
 
+`npm test` runs `node --test test/*.test.cjs` for the modules and project workflows.
+`test/skillsman-cli.test.sh` runs only `test/entrypoints.test.cjs`.
+Run `npm run test:smoke` separately for live upstream checks via
+`test/smoke-real-upstream.sh`.
+
+See the [verification record](docs/verification/project-skill-initialization.md) for tested coverage and limits.
+
 ## Repository Structure
 
-```text
-bin/skillsman
-scenarios/*.yaml
-skills/*/SKILL.md
-skills/*/agents/openai.yaml
-skills/*/references/
-install.sh
-package.json
-```
+- `bin/skillsman`: Bash entrypoint locating the Node command module.
+- `lib/skillsman/`: configuration, inventory, planning, upstream, state and project commands.
+- `scenarios/*.yaml`: candidate sets and explicit full-source requests.
+- `skills/`: canonical bundled skills with metadata and references.
+- `examples/selection.yaml`: a reusable explicit two-skill choice.
+- `test/`: Node tests, helpers and controlled upstream fixtures.
+- `install.sh`, `package.json`: local CLI link and package metadata.
 
 ## License
 
