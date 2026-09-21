@@ -1,0 +1,7 @@
+includes: []
+skills:
+  - source: YatMn/skillsman
+    why: Keep project instructions and README accurate.
+    names:
+      - skillsman-agents-md
+      - skillsman-readme
