@@ -1,13 +1,13 @@
 ---
 name: skillsman-next-prompt
-description: Create a concise, context-aware next prompt that tells Codex what to do next. Use when the user asks for a next prompt, better prompt, continuation prompt, handoff prompt, new chat prompt, resume prompt, context transfer, or wants to continue, steer, or restart work while preserving relevant Superpowers workflow discipline.
+description: Create a concise, context-aware next prompt that tells Codex what to do next. Use when the user asks for a next prompt, better prompt, continuation prompt, handoff prompt, new chat prompt, resume prompt, context transfer, or wants to continue, steer, or restart work while preserving the project’s chosen workflow.
 ---
 
 # Skillsman Next Prompt
 
 Generate a ready-to-paste prompt that helps the user get the next useful action from Codex. The prompt may target the current conversation, a fresh Codex conversation, or another agent. Base it on the visible conversation, repository state, and any available local evidence.
 
-Preserve the user's latest intent and constraints. When the prompt is for a fresh Codex conversation or agent handoff, require the next agent to start with `$superpowers:using-superpowers` before acting.
+Preserve the user's latest intent, existing authorization and constraints. Carry forward a named framework only when the user or project has explicitly chosen it; a fresh conversation or agent handoff does not introduce a new framework dependency.
 
 ## Workflow
 
@@ -29,8 +29,8 @@ Preserve the user's latest intent and constraints. When the prompt is for a fres
 4. Preserve operating constraints:
    - User's latest explicit instructions.
    - Scope boundaries and things not to touch.
-   - Required skill or workflow dependencies.
-   - Human approval gates before irreversible actions, posting, applying, pushing, or deploying when relevant.
+   - Skill or workflow dependencies actually required by the selected project process.
+   - Existing authorization and any remaining approval gates; do not ask again for actions already authorized.
 
 5. Draft the prompt as an instruction, not as a status report.
 
@@ -54,8 +54,6 @@ Success condition:
 For fresh-conversation or handoff prompts, use this structure:
 
 ```text
-Use $superpowers:using-superpowers first.
-
 Task:
 <one-sentence goal>
 
@@ -81,7 +79,7 @@ Do not:
 
 - Keep the prompt short enough to paste into a new chat without becoming a transcript.
 - Prefer exact file paths, commands, dates, branch names, and artifact names over general summaries.
-- Include `$superpowers:using-superpowers` only when the next prompt targets a fresh Codex conversation or agent handoff, or when the user explicitly asks for Superpowers-based flow.
+- If the user or project explicitly chose Superpowers, preserve that choice and reference its available entrypoint. Otherwise omit Superpowers instructions, including for fresh conversations and handoffs.
 - If the task is unfinished because of a blocker, make the blocker and the requested user decision explicit.
 - If the user asks for multiple prompt options, provide distinct prompts for distinct intents instead of minor wording variants.
 - If the user asks for a Chinese prompt, write the prompt in Chinese while preserving literal tool, path, command, and skill names.

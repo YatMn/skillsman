@@ -1,22 +1,42 @@
 name: deployment
 title: Deployment
-summary: Configure, deploy, inspect, and operate hosted web applications.
+summary: Configure, deploy, and operate Vercel applications; candidates are platform-specific.
 
 includes: []
 
 skills:
   - source: vercel/vercel-plugin
-    why: Configure, deploy, inspect, and operate Vercel applications.
+    why: "Primary candidates for Vercel CLI operations, deployments and environment variables; requires a Vercel project and appropriate access."
     names:
-      - bootstrap
+      - vercel-cli
       - deployments-cicd
       - env-vars
-      - marketplace
+
+  - source: vercel/vercel-plugin
+    why: "For linking or bootstrapping a Vercel project and writing Vercel Functions; inspect service provisioning and companion-skill requirements before use."
+    names:
+      - bootstrap
+      - vercel-functions
+
+  - source: vercel/vercel-plugin
+    why: "Only when implementing Vercel platform routing or Runtime Cache; not generic framework middleware or cache guidance."
+    names:
       - routing-middleware
       - runtime-cache
+
+  - source: vercel/vercel-plugin
+    why: "Specialist candidates for Vercel Agent, Sandbox execution or durable Workflow SDK jobs; workflow here is a product SDK, not project planning."
+    names:
       - vercel-agent
-      - vercel-cli
-      - vercel-functions
       - vercel-sandbox
-      - verification
       - workflow
+
+  - source: vercel/vercel-plugin
+    why: "Only for intentional Vercel Marketplace integration work; inspect provider preferences, provisioning instructions and references to other plugin skills."
+    names:
+      - marketplace
+
+  - source: vercel/vercel-plugin
+    why: "Only for requested end-to-end acceptance of a Vercel app; scope browser, API and data verification to the actual change."
+    names:
+      - verification

@@ -1,0 +1,24 @@
+name: documents
+title: Documents
+summary: Create, edit, and validate Word, PDF, presentation, spreadsheet, and file-based report outputs.
+
+includes: []
+
+skills:
+  - source: anthropics/skills
+    why: "Select by required file format: DOCX, PDF, PPTX or XLSX. Inspect each skill’s runtime tools and license; reuse an existing compatible document workflow when available."
+    names:
+      - docx
+      - pdf
+      - pptx
+      - xlsx
+
+  - source: alchaincyf/huashu-skills
+    why: "Optional Markdown-to-PDF output; upstream reports Chinese rendering problems in some macOS Preview environments, so check the intended viewer."
+    names:
+      - huashu-md-to-pdf
+
+  - source: alchaincyf/huashu-skills
+    why: "File-based data analysis and report delivery; inspect external style references. This is not a general-purpose research category."
+    names:
+      - huashu-data-pro

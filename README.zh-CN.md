@@ -183,7 +183,7 @@ Skillsman 不会自动追踪、后台更新或在项目之间传播修改。来�
 | Skill | 用途 |
 | --- | --- |
 | `skillsman-agents-md` | 创建或改进仓库级 agent instruction 文件，例如 `AGENTS.md`。 |
-| `skillsman-branch` | 按 main/develop/release 模型创建、检查、同步和治理 Git/GitHub branches。 |
+| `skillsman-branch` | 遵循仓库实际的 Git/GitHub 分支约定，支持默认分支或 main/develop/release 等工作流。 |
 | `skillsman-manage` | 管理项目 skills：inspect、initialize、add、remove、update、snapshot、apply 和 diagnose。 |
 | `skillsman-next-prompt` | 为 Codex 创建简洁的 continuation、handoff 或 fresh-session prompt。 |
 | `skillsman-openspec` | 安装、初始化、更新和使用 OpenSpec spec-driven workflows。 |
@@ -196,14 +196,25 @@ Skillsman 不会自动追踪、后台更新或在项目之间传播修改。来�
 
 | Scenario | 使用场景 |
 | --- | --- |
-| `workflow` | Planning、branching、review、publish、OpenSpec、README 和 repository workflow skills。 |
-| `web-app` | Frontend、React、Next.js、UI 和 browser app testing。 |
-| `deployment` | Hosted web app deployment、env vars、functions、runtime 和 verification。 |
-| `database` | Supabase、Postgres 和 storage。 |
-| `research` | Web research 和 knowledge extraction。 |
-| `writing` | Writing、docs、editing、office files、scripts、meetings、data 和 slides。 |
-| `design` | Visual design、brand assets、themes、artifacts 和 generated images。 |
-| `all` | 只用于 audit/test aggregate。不要用于真实项目。 |
+| `workflow` | 按需选择规划、调试、评审和仓库助手；特定框架由项目主动选用。 |
+| `web-app` | 前端视觉设计、按需本地浏览器测试和交互制品；不代表完整 React/Next.js 工程覆盖。 |
+| `deployment` | Vercel 专用的部署、环境配置和运行时候选。 |
+| `database` | Postgres 指导，另行选择 Supabase 产品集成能力。 |
+| `research` | 浏览器资料获取、研究简报和 Notion 研究，注明工具和工作区前提。 |
+| `writing` | 文章、审校、脚本、社媒内容、知识归档和会议笔记。 |
+| `documents` | Word、PDF、演示文稿、表格和文件型报告。 |
+| `design` | 静态视觉、生成艺术、主题和特定用途图片。 |
+| `all` | 只用于审计和测试聚合，不用于真实项目。 |
+
+内置场景均明确列出技能名称，上游新增技能不会自动扩张这些列表。候选不等于默认安装：
+选择前阅读 `why`、所需工具及当前上游指令。Vercel 项目优先考虑 CLI、部署和环境配置，
+专用服务需有对应任务；Superpowers 和 OpenSpec 由项目主动选择。
+已安装插件提供兼容技能时，优先复用。
+
+`writing` 处理内容，`documents` 处理文件结构和交付。Notion 技能按任务归类，
+需要连接服务和工作区权限。`huashu-proofreading` 基于实际使用效果，继续作为优先写作候选。
+选用条件与排除理由见[选择指南](skills/skillsman-manage/references/scenario-mapping.md)
+和[目录审查记录](docs/verification/catalog-review.md)。
 
 查看场景候选和选择理由：
 

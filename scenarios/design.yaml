@@ -1,19 +1,30 @@
 name: design
 title: Design
-summary: Create visual design, static assets, UI direction, and generated images.
+summary: Static visuals, generative art, and task-specific image or theme creation.
 
 includes: []
 
 skills:
   - source: anthropics/skills
-    why: Brand, static visual design, generated themes, and interactive artifacts.
+    why: "Static visual composition and parameterized generative art; choose by required output and runtime."
     names:
-      - algorithmic-art
-      - brand-guidelines
       - canvas-design
-      - slack-gif-creator
+      - algorithmic-art
+
+  - source: anthropics/skills
+    why: "Only for an explicit theme preset or Slack GIF task; not required for ordinary visual design."
+    names:
       - theme-factory
-      - web-artifacts-builder
+      - slack-gif-creator
 
   - source: alchaincyf/huashu-design
-    why: Huashu design prototypes, demos, slides, and design variants.
+    why: "Choose when exploring multiple visual directions: the skill requires three variants and a selection checkpoint. Reuse an approved design direction for routine edits instead."
+    names:
+      - huashu-design
+
+  - source: alchaincyf/huashu-skills
+    why: "WeChat or Xiaohongshu image assets and intentional image-host uploads; inspect API keys, host configuration and local paths before selection."
+    names:
+      - huashu-wechat-image
+      - huashu-xhs-image
+      - huashu-image-upload

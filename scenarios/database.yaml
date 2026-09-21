@@ -1,9 +1,16 @@
 name: database
 title: Database
-summary: Work with Supabase, Postgres, and storage.
+summary: Postgres database work and optional Supabase product integration.
 
 includes: []
 
 skills:
   - source: supabase/agent-skills
-    why: Supabase project guidance and Postgres best practices.
+    why: "Postgres schema, queries, security and performance guidance; usable for Postgres projects without adopting the Supabase platform."
+    names:
+      - supabase-postgres-best-practices
+
+  - source: supabase/agent-skills
+    why: "Only for Supabase product work such as Auth, Storage, Realtime or Edge Functions; confirm project access and required tools."
+    names:
+      - supabase

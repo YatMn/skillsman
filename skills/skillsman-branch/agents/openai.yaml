@@ -1,4 +1,4 @@
 interface:
   display_name: "Skillsman Branch"
-  short_description: "Create and govern team Git branches"
+  short_description: "Follow repository Git branch policies"
   default_prompt: "Use $skillsman-branch to create a compliant Git branch from my request."

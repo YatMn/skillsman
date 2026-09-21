@@ -1,53 +1,53 @@
 name: writing
 title: Writing
-summary: Write, edit, document, proofread, and produce office content.
+summary: Write and edit prose, scripts, social content, and knowledge or meeting notes.
 
 includes: []
 
 skills:
   - source: anthropics/skills
-    why: Writing collaboration, internal communication, documents, spreadsheets, slides, and PDFs.
+    why: "Collaborative drafting and revision of substantial text; file generation belongs in documents."
     names:
       - doc-coauthoring
-      - docx
+
+  - source: anthropics/skills
+    why: "Only when producing structured internal company communications or recurring team updates."
+    names:
       - internal-comms
-      - pdf
-      - pptx
-      - xlsx
 
   - source: openai/skills
-    why: Capture decisions, turn specs into plans, research Notion, and prepare meetings.
+    why: "Capture knowledge or prepare meeting materials in an existing Notion workspace; requires connector access. Research and specification implementation have separate task categories."
     names:
       - notion-knowledge-capture
       - notion-meeting-intelligence
-      - notion-research-documentation
-      - notion-spec-to-implementation
 
   - source: alchaincyf/huashu-skills
-    why: Creator writing, scripts, social posts, proofreading, article images, PDFs, data, and slides.
+    why: "Preferred proofreading candidate for personal writing, retained based on the maintainer’s positive use experience; preserve the user’s intended meaning and voice."
     names:
-      - huashu-agent-swarm
-      - huashu-article-edit
-      - huashu-article-to-x
-      - huashu-douyin-script
-      - huashu-prompt-save
       - huashu-proofreading
+
+  - source: alchaincyf/huashu-skills
+    why: "Article editing, topic exploration, spoken scripts and speech coaching; choose the method matching the writing task."
+    names:
+      - huashu-article-edit
+      - huashu-topic-gen
       - huashu-script-polish
       - huashu-speech-coach
-      - huashu-topic-gen
+
+  - source: alchaincyf/huashu-skills
+    why: "Platform-specific social and video content; inspect required APIs and local resources, including Gemini for video analysis."
+    names:
+      - huashu-article-to-x
+      - huashu-douyin-script
       - huashu-video-check
       - huashu-video-outline
-      - huashu-image-upload
-      - huashu-wechat-image
-      - huashu-xhs-image
-      - huashu-research
-      - huashu-info-search
-      - huashu-material-search
-      - huashu-md-to-pdf
-      - huashu-data-pro
-      - huashu-slides
+
+  - source: alchaincyf/huashu-skills
+    why: "Save reusable prompts only when a local prompt library is part of the task; inspect the expected storage layout."
+    names:
+      - huashu-prompt-save
 
   - source: https://github.com/softaworks/agent-toolkit
-    why: Detect and remove AI writing patterns while preserving the intended meaning and voice.
+    why: "Optional prose editing, especially English; preserve real facts and the intended voice instead of treating a word blacklist as a quality score."
     names:
       - humanizer

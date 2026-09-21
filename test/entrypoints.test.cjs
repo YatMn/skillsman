@@ -4,7 +4,26 @@ const ok=r=>assert.equal(r.status,0,r.stderr+'\n'+r.stdout);
 test('remove forwards each explicit canonical target and doctor explains provenance',t=>{const p=makeProject(t);ok(p.run('remove','alpha','--target','claude,cursor'));const calls=p.calls().filter(c=>c.args[0]==='remove');assert.deepEqual(calls.map(c=>c.args.slice(c.args.indexOf('--agent')+1)),[['claude-code','-y'],['cursor','-y']]);const r=p.run('doctor','--target','codex');ok(r);assert.match(r.stdout,/skills-lock.json is used by snapshot/);});
 test('all target does not infer complete coverage from a Codex installation',t=>{const p=makeProject(t),file=p.selection(['alpha']);ok(p.run('init','--file',file,'--target','codex'));const before=treeDigest(p.path),r=p.run('init','--file',file,'--target','all');assert.notEqual(r.status,0);assert.match(r.stderr,/ALL_TARGET_UNVERIFIED/);assert.equal(treeDigest(p.path),before);});
 test('snapshot canonicalizes claude and apply only restores requested names',t=>{const p=makeProject(t),q=makeProject(t),f=p.selection(['alpha']);ok(p.run('init','--file',f,'--target','claude'));const snapshot=path.join(p.root,'snapshot.yaml');ok(p.run('snapshot','--target','claude','--output',snapshot));assert.match(fs.readFileSync(snapshot,'utf8'),/claude-code:/);ok(q.run('apply',snapshot,'--target','claude'));assert(fs.existsSync(path.join(q.path,'.claude/skills/alpha/SKILL.md')));assert(!fs.existsSync(path.join(q.path,'.agents/skills/gamma')));const before=treeDigest(q.path);ok(q.run('apply',snapshot,'--target','claude','--dry-run'));assert.equal(treeDigest(q.path),before);});
-test('workflow displays rationale and preserves explicit full-source calls',t=>{const p=makeProject(t);const show=p.run('show','workflow');ok(show);assert.match(show.stdout,/skillsman-openspec/);assert.match(show.stdout,/why:/);ok(p.run('init','workflow','--target=codex'));const full=p.calls().filter(c=>c.cwd===p.path&&c.args[0]==='add'&&c.args[1]==='obra/superpowers');assert.equal(full.length,1);assert(!full[0].args.includes('--skill'));const rejected=p.run('init','all','--target','codex');assert.notEqual(rejected.status,0);assert.match(rejected.stderr,/audit-only/);});
+test('workflow installs only the named candidates and keeps all audit-only', t => {
+ const p=makeProject(t);
+ const rows=require('../lib/skillsman/config.cjs').expandScenario('workflow',path.resolve(__dirname,'../scenarios'));
+ for(const row of rows){
+  assert(Array.isArray(row.names));
+  const source=p.settings.catalog[row.source]??={};
+  for(const name of row.names)source[name]=name;
+ }
+ p.settings.catalog['obra/superpowers']['future-unselected-skill']='must not install';
+ p.configure({});
+ const show=p.run('show','workflow');ok(show);
+ assert.match(show.stdout,/skillsman-openspec/);assert.match(show.stdout,/why:/);
+ ok(p.run('init','workflow','--target=codex'));
+ const calls=p.calls().filter(c=>c.cwd===p.path&&c.args[0]==='add');
+ assert(calls.length>0);
+ assert(calls.every(c=>c.args.includes('--skill')));
+ assert(!fs.existsSync(path.join(p.path,'.agents/skills/future-unselected-skill')));
+ const rejected=p.run('init','all','--target','codex');
+ assert.notEqual(rejected.status,0);assert.match(rejected.stderr,/audit-only/);
+});
 test('complete skill names and target aliases survive argument handling',t=>{const p=makeProject(t);p.settings.catalog['example/kit']['Name With Spaces']='named';p.configure({});const f=p.selection(['Name With Spaces']);ok(p.run('init','--file='+f,'--target=codex,claude'));const call=p.calls().find(c=>c.cwd===p.path&&c.args[0]==='add');assert(call.args.includes('Name With Spaces'));assert(call.args.includes('claude-code'));});
 test('invalid snapshot fails before any installation',t=>{const p=makeProject(t);for(const text of ['targets:\n  codex:\n    skills: []\n','schema: old\ntargets: {}\n']){const f=path.join(p.root,'bad.yaml');fs.writeFileSync(f,text);const before=treeDigest(p.path);assert.notEqual(p.run('apply',f,'--target','codex').status,0);assert.equal(treeDigest(p.path),before);}assert(!p.calls().some(c=>c.args[0]==='add'));});
 
