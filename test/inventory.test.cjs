@@ -187,7 +187,7 @@ test('conflicting raw list and lock sources are explicit, not silently preferred
   assert(result.problems.some(problem => problem.code === 'SOURCE_CONFLICT'));
 });
 
-test('unreadable directories and broken raw lock links are explicit failures', async t => {
+test('unreadable directories are explicit failures', { skip: process.getuid?.() === 0 }, async t => {
   const p = makeProject(t);
   const directory = path.join(p.path, '.agents/skills');
   fs.mkdirSync(directory, { recursive: true });
@@ -196,6 +196,10 @@ test('unreadable directories and broken raw lock links are explicit failures', a
     const result = await api().readInventory(p.path, ['codex'], upstream([]));
     assert(result.problems.some(problem => problem.code === 'DIRECTORY_UNREADABLE'));
   } finally { fs.chmodSync(directory, 0o755); }
+});
+
+test('broken raw lock links are explicit failures', async t => {
+  const p = makeProject(t);
   fs.symlinkSync('missing-lock', path.join(p.path, 'skills-lock.json'));
   await assert.rejects(api().readInventory(p.path, ['codex'], upstream([])), /lock/);
 });
