@@ -92,7 +92,7 @@ function verifyPackage(directory, cache) {
 
 function copySource(destination) {
   fs.mkdirSync(destination);
-  for (const name of ['package.json', 'bin', 'lib', 'scenarios', 'skills', 'test', 'examples', 'README.md', 'README.zh-CN.md', 'LICENSE']) {
+  for (const name of ['package.json', 'bin', 'lib', 'scenarios', 'skills', 'test', 'examples', 'docs', 'README.md', 'README.zh-CN.md', 'LICENSE']) {
     const source = path.join(root, name);
     if (fs.existsSync(source)) fs.cpSync(source, path.join(destination, name), { recursive: true, dereference: false });
   }
